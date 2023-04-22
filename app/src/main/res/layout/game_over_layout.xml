@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.thewizard.chainreactiononline20.ui_elements.NeonTextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/restartButton"
+        android:textColor="@color/white"
+        app:textSize="30dp"
+        app:text="GAME OVER"
+        app:glowSize="40dp"
+        app:textColor="#E4FBD7" />
+
+    <RelativeLayout
+        android:id="@+id/MainView"
+        android:layout_width="220dp"
+        android:layout_height="150dp"
+        app:layout_constraintBottom_toTopOf="@+id/restartButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        android:animateLayoutChanges="true">
+
+        <com.thewizard.chainreactiononline20.ui_elements.NeonImageButton
+            android:id="@+id/increasePLayerButton"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:src="@drawable/add_button_icon"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            app:buttonColor="#5BAA00" />
+
+        <com.thewizard.chainreactiononline20.ui_elements.NeonImageButton
+            android:id="@+id/decreasePLayerButton"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:src="@drawable/remove_button_icon"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            app:buttonColor="#5BAA00" />
+
+        <com.thewizard.chainreactiononline20.ui_elements.NeonTextView
+            android:id="@+id/playerNumberView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:textSize="30dp"
+            app:text="2"
+            app:glowSize="40dp"
+            app:textColor="#ffffff" />
+
+        <com.thewizard.chainreactiononline20.ui_elements.NeonTextView
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textColor="@color/white"
+            app:textSize="15dp"
+            app:text="NUMBER OF PLAYERS"
+            app:glowSize="20dp"
+            app:textColor="#24A8DC"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+
+
+    <com.thewizard.chainreactiononline20.ui_elements.NeonButton
+        android:id="@+id/restartButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        android:clipToOutline="false"
+        app:text="RESTART"
+        app:glowSize="15dp"
+        app:textSize="15dp"
+        app:buttonColor="#D51111" />
+</androidx.constraintlayout.widget.ConstraintLayout>
