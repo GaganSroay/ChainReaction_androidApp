@@ -16,7 +16,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/startButton"
+        app:layout_constraintBottom_toBottomOf="@id/MainView"
         android:textColor="@color/white"
         app:textSize="30dp"
         app:text="CHAIN REACTION"
@@ -27,10 +27,10 @@
         android:id="@+id/MainView"
         android:layout_width="220dp"
         android:layout_height="150dp"
-        app:layout_constraintBottom_toTopOf="@+id/startButton"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintTop_toTopOf="parent"
         android:animateLayoutChanges="true">
 
         <com.thewizard.chainreactiononline20.ui_elements.NeonImageButton
@@ -82,12 +82,13 @@
     <com.thewizard.chainreactiononline20.ui_elements.NeonButton
         android:id="@+id/startButton"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="120dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintTop_toTopOf="@id/MainView"
+        app:layout_constraintVertical_bias="0.6"
         android:clipToOutline="false"
         app:text="START"
-        app:glowSize="15dp"
-        app:textSize="15dp"
+        app:glowSize="20dp"
+        app:textSize="20dp"
         app:buttonColor="#D51111" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,13 +1,17 @@
 package com.thewizard.chainreactiononline20
 
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.thewizard.chainreactiononline20.display.GameRenderer
 import com.thewizard.chainreactiononline20.display.GridSurfaceTouchHandler
+import com.thewizard.chainreactiononline20.display.color.ColorArray
 import com.thewizard.chainreactiononline20.gameLogic.Game
 import com.thewizard.chainreactiononline20.gameLogic.dataHolder.GameSettings
 import com.thewizard.chainreactiononline20.ui_elements.GameSurfaceView
@@ -31,6 +35,10 @@ class MainActivity : AppCompatActivity(), GridSurfaceTouchHandler.TouchResult {
 
     lateinit var currentPlayerView: NeonTextView
 
+    lateinit var postGamestartMenu: ConstraintLayout
+    lateinit var postGameTitle: TextView
+    lateinit var postGameMenuButton: ImageButton
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,18 +50,34 @@ class MainActivity : AppCompatActivity(), GridSurfaceTouchHandler.TouchResult {
         gameOverMenu =
             layoutInflater.inflate(R.layout.game_over_layout, root, false) as ConstraintLayout
 
+
+
+        startButton = mainMenu.findViewById(R.id.startButton)
+        glsurface = findViewById(R.id.glsurface)
+        postGamestartMenu = findViewById(R.id.game_start_menu_container)
+        postGameTitle = findViewById(R.id.after_game_start_title)
+        postGameMenuButton = findViewById(R.id.game_start_menu_button)
+
         gameOverMenu.visibility = GONE
+        postGamestartMenu.visibility = GONE
 
         root.addView(mainMenu)
         root.addView(gameOverMenu)
-        startButton = mainMenu.findViewById(R.id.startButton)
-        glsurface = findViewById(R.id.glsurface)
 
         renderer = GameRenderer(this, gameSettings)
         glsurface.setRenderer(renderer)
 
         game = Game(gameSettings)
         game.addGameOverListener { runOnUiThread { stopGame() } }
+
+        gameSettings.addListener {
+            game.gameState.addTurnChangeListener {
+                val color = ColorArray.toColor(it.colorValue)
+                postGameTitle.setTextColor(color)
+                postGameMenuButton.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+            }
+        }
+
 
         glsurface.setOnTouchListener(GridSurfaceTouchHandler(gameSettings, this))
 
@@ -91,6 +115,7 @@ class MainActivity : AppCompatActivity(), GridSurfaceTouchHandler.TouchResult {
 
     fun stopGame() {
         gameOverMenu.visibility = VISIBLE
+        postGamestartMenu.visibility = GONE
         currentPlayerView = findViewById(R.id.playerNumberView)
         updatePlayerView()
 
@@ -104,6 +129,7 @@ class MainActivity : AppCompatActivity(), GridSurfaceTouchHandler.TouchResult {
 
     fun startGame() {
         mainMenu.visibility = GONE
+        postGamestartMenu.visibility = VISIBLE
         removeIncDecButtonListeners(mainMenu)
         root.removeView(mainMenu)
         game.startGame()

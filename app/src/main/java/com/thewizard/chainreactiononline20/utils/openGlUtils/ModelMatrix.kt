@@ -6,11 +6,21 @@ import com.thewizard.chainreactiononline20.utils.objUtils.Point3D
 open class ModelMatrix {
 
     var positionMatrix = FloatArray(16)
-    val rotationMatrix = FloatArray(16)
-    val scaleMatrix = FloatArray(16)
+    var rotationMatrix = FloatArray(16)
+    var scaleMatrix = FloatArray(16)
+
+    var viewMatrix = FloatArray(16)
+    var projectionMatrix = FloatArray(16)
+
     val temp = FloatArray(16)
 
     val modelMatrix: FloatArray get() = multiplyMatrix(positionMatrix, scaleMatrix, rotationMatrix)
+    val modelViewProjectionMatrix: FloatArray
+        get() = multiplyMatrix(
+            viewMatrix,
+            projectionMatrix,
+            modelMatrix
+        )
 
     var position: Point3D = Point3D()
         set(point) {
@@ -36,6 +46,11 @@ open class ModelMatrix {
     }
 
     fun rotate(angle: Float, x: Float, y: Float, z: Float) {
+        Matrix.setRotateM(rotationMatrix, 0, angle, x, y, z)
+    }
+
+    fun setOrientation(angle: Float, x: Float, y: Float, z: Float) {
+        Matrix.setIdentityM(rotationMatrix, 0)
         Matrix.setRotateM(rotationMatrix, 0, angle, x, y, z)
     }
 

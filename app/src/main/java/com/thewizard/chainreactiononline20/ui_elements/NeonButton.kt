@@ -8,7 +8,6 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.ViewGroup
 import com.thewizard.chainreactiononline20.utils.otherUtils.Logger
 
 
@@ -21,8 +20,6 @@ class NeonButton(context: Context, attrs: AttributeSet) : NeonView(context, attr
     var buttonDown = false
 
 
-    var originalWidth = 0
-    var originalHeight = 0
 
     val buttonDownColor = changeBrightness(buttonColor, 0.8f)
 
@@ -31,9 +28,9 @@ class NeonButton(context: Context, attrs: AttributeSet) : NeonView(context, attr
         setBackgroundColor(Color.TRANSPARENT)
         baseRect = RectF(
             glowSize + width / 6,
-            glowSize + (height - originalHeight) / 2,
+            glowSize + (height) / 2,
             width - glowSize - width / 6,
-            height - glowSize - (height - originalHeight) / 2
+            height - glowSize - (height) / 2
         )
         textPosX = (width / 2).toFloat()
         textPosY = (height / 2) - ((textPaint.descent() + textPaint.ascent()) / 2)
@@ -102,20 +99,6 @@ class NeonButton(context: Context, attrs: AttributeSet) : NeonView(context, attr
 
 
 
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-
-        val parent = parent as ViewGroup
-        val params = layoutParams
-
-        originalHeight = params.height
-        originalWidth = params.width
-
-        params.height = params.height * 2
-        params.width = params.width * 2
-        y = -originalHeight.toFloat() / 2
-        parent.updateViewLayout(this, params)
-    }
 
 
     override fun onTouchEvent(event: MotionEvent): Boolean {

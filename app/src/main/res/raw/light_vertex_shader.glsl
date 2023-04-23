@@ -31,7 +31,7 @@ void main(){
 
     vec3 specDirection = normalize(vec3(1.0, 1.0, 0.3));
     vec3 reflectDir = reflect(-lightVector, modelViewNormal);
-    spec = pow(max(dot(specDirection, reflectDir), 0.05), 10.0);
+    spec = pow(max(dot(specDirection, reflectDir), 0.05), 5.0);
 
 
     gl_Position = u_MVPMatrix * a_Position;

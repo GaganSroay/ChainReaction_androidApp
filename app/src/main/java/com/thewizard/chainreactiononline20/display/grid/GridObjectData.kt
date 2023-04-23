@@ -42,6 +42,7 @@ class GridObjectData {
                         vlist,
                         x, y, startZ,
                         x, y, startZ - newZ,
+                        14
                     )
                 }
 
@@ -69,9 +70,9 @@ class GridObjectData {
         fun addPoint(
             list: Vector<Float>,
             x1: Float, y1: Float, z1: Float,
-            x2: Float, y2: Float, z2: Float
+            x2: Float, y2: Float, z2: Float,
+            sections: Int = 25
         ) {
-            val sections = 30
             var px = x1
             var py = y1
             var pz = z1

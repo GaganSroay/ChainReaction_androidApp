@@ -41,9 +41,6 @@ open class OBJ(context: Context, res: Int) : ModelMatrix() {
     var color = PlayerColor.DEFAULT
     var ambientColor = PlayerColor.DEFAULT
 
-    lateinit var viewMatrix: FloatArray
-    lateinit var projectionMatrix: FloatArray
-
 
     init {
 
