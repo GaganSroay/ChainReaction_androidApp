@@ -9,9 +9,11 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.thewizard.chainreactiononline20.display.GameRenderer
 import com.thewizard.chainreactiononline20.display.GridSurfaceTouchHandler
 import com.thewizard.chainreactiononline20.gameLogic.Game
-import com.thewizard.chainreactiononline20.gameLogic.GameSettings
+import com.thewizard.chainreactiononline20.gameLogic.dataHolder.GameSettings
 import com.thewizard.chainreactiononline20.ui_elements.GameSurfaceView
 import com.thewizard.chainreactiononline20.ui_elements.NeonButton
+import com.thewizard.chainreactiononline20.ui_elements.NeonImageButton
+import com.thewizard.chainreactiononline20.ui_elements.NeonTextView
 
 class MainActivity : AppCompatActivity(), GridSurfaceTouchHandler.TouchResult {
     lateinit var glsurface: GameSurfaceView
@@ -25,6 +27,9 @@ class MainActivity : AppCompatActivity(), GridSurfaceTouchHandler.TouchResult {
 
     lateinit var game: Game
     lateinit var renderer: GameRenderer
+
+
+    lateinit var currentPlayerView: NeonTextView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,20 +56,56 @@ class MainActivity : AppCompatActivity(), GridSurfaceTouchHandler.TouchResult {
         game.addGameOverListener { runOnUiThread { stopGame() } }
 
         glsurface.setOnTouchListener(GridSurfaceTouchHandler(gameSettings, this))
+
+        currentPlayerView = mainMenu.findViewById(R.id.playerNumberView)
         startButton.setOnClickListener { startGame() }
+        addIncDecButtonListeners(mainMenu)
+        updatePlayerView()
+    }
+
+    fun addIncDecButtonListeners(parent: ViewGroup) {
+
+        val incButton = parent.findViewById<NeonImageButton>(R.id.increasePLayerButton)
+        val decButton = parent.findViewById<NeonImageButton>(R.id.decreasePLayerButton)
+
+        incButton.setOnClickListener {
+            gameSettings.numberOfPLayers++
+            updatePlayerView()
+        }
+        decButton.setOnClickListener {
+            gameSettings.numberOfPLayers--
+            updatePlayerView()
+        }
+    }
+
+    fun removeIncDecButtonListeners(parent: ViewGroup) {
+        val incButton = parent.findViewById<NeonImageButton>(R.id.increasePLayerButton)
+        val decButton = parent.findViewById<NeonImageButton>(R.id.decreasePLayerButton)
+        incButton.setOnClickListener(null)
+        decButton.setOnClickListener(null)
+    }
+
+    fun updatePlayerView() {
+        currentPlayerView.text = gameSettings.numberOfPLayers.toString()
     }
 
     fun stopGame() {
         gameOverMenu.visibility = VISIBLE
-        gameOverMenu.findViewById<NeonButton>(R.id.restartButton)
-            .setOnClickListener {
-                gameOverMenu.visibility = GONE
-                startGame()
-            }
+        currentPlayerView = findViewById(R.id.playerNumberView)
+        updatePlayerView()
+
+        addIncDecButtonListeners(gameOverMenu)
+        gameOverMenu.findViewById<NeonButton>(R.id.restartButton).setOnClickListener {
+            gameOverMenu.visibility = GONE
+            removeIncDecButtonListeners(gameOverMenu)
+            startGame()
+        }
     }
 
     fun startGame() {
         mainMenu.visibility = GONE
+        removeIncDecButtonListeners(mainMenu)
+        root.removeView(mainMenu)
         game.startGame()
         renderer.gameState = game.gameState
     }

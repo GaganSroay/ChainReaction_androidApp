@@ -8,6 +8,7 @@ class Player {
 
     lateinit var color: BasicColor
     lateinit var backgroundColorValue: FloatArray
+    lateinit var gridColorValue: FloatArray
     lateinit var colorValue: FloatArray
 
     var qualified = true
@@ -30,6 +31,7 @@ class Player {
     fun color(color: BasicColor) {
         this.color = color
         colorValue = PlayerColor.getColor(color)
+        gridColorValue = GridColor.getColor(color)
         backgroundColorValue = GridColor.getBackgroundColor(color)
     }
 

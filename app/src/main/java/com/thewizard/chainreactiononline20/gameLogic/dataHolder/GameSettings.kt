@@ -1,4 +1,4 @@
-package com.thewizard.chainreactiononline20.gameLogic
+package com.thewizard.chainreactiononline20.gameLogic.dataHolder
 
 import com.thewizard.chainreactiononline20.utils.otherUtils.ChangeHandler
 
@@ -6,7 +6,14 @@ class GameSettings : ChangeHandler {
 
     var rows: Int = default_rows
     var cols: Int = default_cols
+
     var numberOfPLayers: Int = default_numberOfPLayers
+        set(value) {
+            if (value in 2..8) {
+                field = value
+                onChange()
+            }
+        }
 
     constructor()
     constructor(rows: Int, cols: Int, numberOfPlayer: Int) {
@@ -19,6 +26,7 @@ class GameSettings : ChangeHandler {
         this.numberOfPLayers = numberOfPlayer
         onChange()
     }
+
 
     companion object {
         const val default_rows = 9

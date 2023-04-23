@@ -6,7 +6,7 @@ class PlayerColor {
             return when (color) {
                 BasicColor.RED -> floatArrayOf(1f, 0f, 0f, 1f)
                 BasicColor.GREEN -> floatArrayOf(0f, 1f, 0f, 1f)
-                BasicColor.BLUE -> floatArrayOf(0f, 0f, 1f, 1f)
+                BasicColor.BLUE -> floatArrayOf(0.2f, 0.2f, 1f, 1f)
                 BasicColor.YELLOW -> floatArrayOf(1f, 1f, 0f, 1f)
                 BasicColor.MAGENTA -> floatArrayOf(1f, 0f, 1f, 1f)
                 BasicColor.CYAN -> floatArrayOf(0f, 1f, 1f, 1f)
@@ -29,6 +29,8 @@ class PlayerColor {
                 else -> BasicColor.EMPTY
             }
         }
+
+        val DEFAULT = getColor(BasicColor.RED)
     }
 
 

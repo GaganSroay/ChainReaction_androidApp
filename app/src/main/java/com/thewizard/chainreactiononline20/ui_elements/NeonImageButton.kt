@@ -14,48 +14,31 @@ import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.toBitmap
-import com.thewizard.chainreactiononline20.R
+import com.thewizard.chainreactiononline20.utils.otherUtils.Logger
 
 
-class NeonImageButton(context: Context, attrs: AttributeSet?) : View(context, attrs) {
+class NeonImageButton(context: Context, attrs: AttributeSet?) : NeonView(context, attrs) {
 
-    var imgRes = 0
     lateinit var bitmap: Bitmap
     lateinit var originalBitmap: Bitmap
     lateinit var blurredBitmap: Bitmap
     lateinit var blurredMoreBitmap: Bitmap
     lateinit var lastblurredMoreBitmap: Bitmap
+
     lateinit var mainRectF: RectF
-
-
-    var color = 0
-    var glowColor = 0
-
     var buttonDown = false
 
+    var glowColor = changeBrightness(buttonColor, 0.8f)
     val drawGlow = true
 
-    init {
-        context.theme
-            .obtainStyledAttributes(attrs, R.styleable.NeonUI, 0, 0)
-            .apply {
-                imgRes = getResourceId(R.styleable.NeonUI_src, R.drawable.ic_launcher_foreground)
-                color = getColor(R.styleable.NeonUI_buttonColor, Color.WHITE)
-                val brightness = 0.8f
-                glowColor = Color.rgb(
-                    (Color.red(color).toFloat() * brightness).toInt(),
-                    (Color.green(color).toFloat() * brightness).toInt(),
-                    (Color.blue(color).toFloat() * brightness).toInt()
-                )
-            }
-    }
+    lateinit var canvas: Canvas
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        bitmap = AppCompatResources.getDrawable(context, imgRes)!!.toBitmap(w, h)
+        setBackgroundColor(Color.TRANSPARENT)
+        bitmap = AppCompatResources.getDrawable(context, src)!!.toBitmap(w, h)
         originalBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
         if (drawGlow) {
             blurredBitmap = blurRecursion(originalBitmap, 25f, 2)
@@ -63,18 +46,13 @@ class NeonImageButton(context: Context, attrs: AttributeSet?) : View(context, at
             lastblurredMoreBitmap = blurRecursion(originalBitmap, 25f, 10)
         }
 
-        mainRectF = RectF(
-            0f,
-            0f,
-            width.toFloat(),
-            height.toFloat()
-        )
+        mainRectF = RectF(0f, 0f, width.toFloat(), height.toFloat())
     }
 
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-
+        this.canvas = canvas
         canvas.apply {
             if (buttonDown)
                 drawBitmap(bitmap, null, mainRectF, bitmapDownPaint)
@@ -87,20 +65,13 @@ class NeonImageButton(context: Context, attrs: AttributeSet?) : View(context, at
                 drawBitmap(originalBitmap, null, mainRectF, bitmapPaint)
             }
         }
-
-
-    }
-
-
-    override fun performClick(): Boolean {
-        return super.performClick()
     }
 
 
     val bitmapPaint: Paint
         get() {
             val paint = Paint()
-            paint.colorFilter = topColorFilter(color)
+            paint.colorFilter = topColorFilter(buttonColor)
             return paint
         }
 
@@ -116,28 +87,13 @@ class NeonImageButton(context: Context, attrs: AttributeSet?) : View(context, at
     val bitmapDownPaint: Paint
         get() {
             val paint = Paint()
-            paint.colorFilter = topColorFilter(color)
+            paint.colorFilter = topColorFilter(buttonColor)
             paint.alpha = 200
             return paint
         }
 
     fun topColorFilter(color: Int) = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP)
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                buttonDown = true
-                invalidate()
-            }
-
-            MotionEvent.ACTION_UP -> {
-                buttonDown = false
-                performClick()
-                invalidate()
-            }
-        }
-        return true
-    }
 
     fun blurRecursion(bitmap: Bitmap, radius: Float, i: Int): Bitmap {
         if (i > 0) {
@@ -165,5 +121,22 @@ class NeonImageButton(context: Context, attrs: AttributeSet?) : View(context, at
         return outputBitmap
     }
 
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                Logger("DOWN")
+                buttonDown = true
+                invalidate()
+            }
+
+            MotionEvent.ACTION_UP -> {
+                Logger("UP")
+                buttonDown = false
+                performClick()
+                invalidate()
+            }
+        }
+        return true
+    }
 
 }

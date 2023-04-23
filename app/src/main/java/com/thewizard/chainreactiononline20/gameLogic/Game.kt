@@ -2,6 +2,7 @@ package com.thewizard.chainreactiononline20.gameLogic
 
 import com.thewizard.chainreactiononline20.display.explosion.Explosion
 import com.thewizard.chainreactiononline20.display.explosion.ExplosionStateListener
+import com.thewizard.chainreactiononline20.gameLogic.dataHolder.GameSettings
 import com.thewizard.chainreactiononline20.gameLogic.dataHolder.GameState
 import com.thewizard.chainreactiononline20.gameLogic.dataHolder.Player
 import java.util.Vector
@@ -29,13 +30,14 @@ class Game(
     }
 
 
-    fun stopGame(player: Player?) {
-        if (player == null) return
+    fun stopGame() {
+
+        val winner: Player = getWinner(gameState) ?: return
 
         inAnimationState = false
         gameInProgress = false
         for (lis in gameOverListeners)
-            lis.onGameWon(player)
+            lis.onGameWon(winner)
     }
 
 
@@ -50,17 +52,20 @@ class Game(
     }
 
     fun checkForExplosions() {
-        if (!gameInProgress) return
 
         val explosionLocations = getExplosionLocations(gameState)
 
-        if (explosionLocations.size == 0) {
-            readyForNextTurn()
-            return
+        if (gameInProgress) {
+            if (checkWon(gameState)) stopGame()
+            if (explosionLocations.size == 0) {
+                readyForNextTurn()
+                return
+            }
         }
 
         gameState.explosionAnimation
-            .startExplosions(explosionLocations,
+            .startExplosions(
+                explosionLocations,
                 object : ExplosionStateListener {
                     override fun onExplosionStart(explosionPoints: Vector<Explosion>) {
                         makeExplosionsStage1(gameState, explosionLocations)
@@ -68,11 +73,6 @@ class Game(
 
                     override fun onExplosionFinish(explosionPoints: Vector<Explosion>) {
                         makeExplosionsStage2(gameState, explosionLocations)
-                        if (checkWon(gameState)) {
-                            val winner = getWinner(gameState)
-                            stopGame(winner)
-                            return
-                        }
                         checkForExplosions()
                     }
                 })

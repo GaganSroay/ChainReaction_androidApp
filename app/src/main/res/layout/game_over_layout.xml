@@ -6,7 +6,8 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/menuBackground">
 
     <com.thewizard.chainreactiononline20.ui_elements.NeonTextView
         android:id="@+id/title"

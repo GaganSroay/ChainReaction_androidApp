@@ -3,7 +3,7 @@ package com.thewizard.chainreactiononline20.display
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
-import com.thewizard.chainreactiononline20.gameLogic.GameSettings
+import com.thewizard.chainreactiononline20.gameLogic.dataHolder.GameSettings
 
 class GridSurfaceTouchHandler(
     gameSettings: GameSettings,
@@ -49,6 +49,7 @@ class GridSurfaceTouchHandler(
                 val pj = (downX - startX) / boxSize
 
                 if (i != pi || j != pj) return true
+                if (i >= rows || j >= cols) return true
 
                 boxLocation.getTouchIndex(i, j)
                 v.performClick()

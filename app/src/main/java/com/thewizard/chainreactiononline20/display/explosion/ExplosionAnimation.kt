@@ -1,10 +1,9 @@
 package com.thewizard.chainreactiononline20.display.explosion
 
 import android.os.SystemClock
-import com.thewizard.chainreactiononline20.gameLogic.GameSettings
-import com.thewizard.chainreactiononline20.objects_3d.GameGridRenderer
+import com.thewizard.chainreactiononline20.display.grid.BoxPositions
+import com.thewizard.chainreactiononline20.gameLogic.dataHolder.GameSettings
 import com.thewizard.chainreactiononline20.objects_3d.Sphere.Sphere
-import com.thewizard.chainreactiononline20.utils.objUtils.Point3D
 import java.util.Vector
 import kotlin.math.sin
 
@@ -13,25 +12,21 @@ class ExplosionAnimation(gameSettings: GameSettings) {
 
     var explosionPoints = Vector<Explosion>()
 
-    val boxSize = (GameGridRenderer.sphereGridWidth / gameSettings.cols)
+    val boxSize = (BoxPositions.sphereGridWidth / gameSettings.cols)
     var explosionStateListener: ExplosionStateListener? = null
 
-    var time: Float = 0f
-    var explosionInProgress = false;
+    var time = 0L
+    var explosionInProgress = false
     val progress: Float get() = (SystemClock.uptimeMillis() - time) / ANIMATION_DURATION
-    val displacement: Float get() = boxSize * (1 + sin(Math.PI * (progress - 0.5))).toFloat() * 0.5f
+    val displacement: Float get() = boxSize * (1.0 + sin(Math.PI * (progress - 0.5))).toFloat() * 0.5f
 
-    fun drawExplosions(spherePositions: Array<Array<Point3D>>, sphere: Sphere, color: FloatArray) {
+
+    fun drawExplosions(sphere: Sphere, color: FloatArray) {
         if (!explosionInProgress) return
         if (progress >= 0.95f) return endAnimation()
 
         for (e in explosionPoints) {
-            e.draw(
-                spherePositions[e.i][e.j],
-                sphere,
-                displacement,
-                color
-            )
+            e.draw(sphere, displacement, color)
         }
 
     }
@@ -44,8 +39,9 @@ class ExplosionAnimation(gameSettings: GameSettings) {
 
     fun startExplosions(explosionPoints: Vector<Explosion>) {
         this.explosionPoints = explosionPoints
-        time = SystemClock.uptimeMillis().toFloat()
+        time = SystemClock.uptimeMillis()
         explosionInProgress = true
+
     }
 
     fun startExplosions(

@@ -23,9 +23,9 @@ open class GameLogic {
 
     fun getExplosionLocations(gameState: GameState): Vector<Explosion> {
         val explosionLocations = Vector<Explosion>()
-        gameState.loop { i, j, box ->
+        gameState.loop { box ->
             if (box.value > box.maxValue)
-                explosionLocations.add(Explosion(i, j, gameState.gameSettings))
+                explosionLocations.add(Explosion(box, gameState.gameSettings))
         }
         return explosionLocations
     }
@@ -58,7 +58,7 @@ open class GameLogic {
     private fun updatePlayers(gameState: GameState) {
         for (p in gameState.players)
             p.qualified = false
-        gameState.loop { _, _, box ->
+        gameState.loop { box ->
             if (box.value > 0)
                 box.player.qualified = true
         }

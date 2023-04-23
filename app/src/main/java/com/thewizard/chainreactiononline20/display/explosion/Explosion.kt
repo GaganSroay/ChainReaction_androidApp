@@ -1,15 +1,17 @@
 package com.thewizard.chainreactiononline20.display.explosion
 
-import com.thewizard.chainreactiononline20.gameLogic.GameSettings
+import com.thewizard.chainreactiononline20.gameLogic.dataHolder.Box
+import com.thewizard.chainreactiononline20.gameLogic.dataHolder.GameSettings
 import com.thewizard.chainreactiononline20.objects_3d.Sphere.Sphere
-import com.thewizard.chainreactiononline20.utils.objUtils.Point3D
 import com.thewizard.chainreactiononline20.utils.openGlUtils.ModelMatrix
 
 open class Explosion(
-    val i: Int,
-    val j: Int,
+    box: Box,
     gameSettings: GameSettings,
 ) {
+
+    val i = box.i
+    val j = box.j
 
     var upModel = ModelMatrix()
     var downModel = ModelMatrix()
@@ -21,17 +23,15 @@ open class Explosion(
     var left = j != 0
     var right = j != gameSettings.cols - 1
 
-    var gotLocation = false
+    init {
+        upModel.position = box.position
+        downModel.position = box.position
+        leftModel.position = box.position
+        rightModel.position = box.position
+    }
 
 
-    fun draw(location: Point3D, sphere: Sphere, d: Float, color: FloatArray) {
-        if (!gotLocation) {
-            upModel.position = location
-            downModel.position = location
-            leftModel.position = location
-            rightModel.position = location
-            gotLocation = true
-        }
+    fun draw(sphere: Sphere, d: Float, color: FloatArray) {
 
         if (up) {
             upModel.moveRelativeToOrigin(0f, d, 0f)

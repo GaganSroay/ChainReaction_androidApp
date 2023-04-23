@@ -15,19 +15,17 @@ import android.view.Window
 import android.view.WindowManager
 import com.thewizard.chainreactiononline20.MainActivity
 import com.thewizard.chainreactiononline20.R
-import com.thewizard.chainreactiononline20.display.color.BasicColor
 import com.thewizard.chainreactiononline20.display.color.GridColor
-import com.thewizard.chainreactiononline20.display.color.PlayerColor
-import com.thewizard.chainreactiononline20.gameLogic.GameSettings
+import com.thewizard.chainreactiononline20.display.grid.BoxPositions
+import com.thewizard.chainreactiononline20.gameLogic.dataHolder.GameSettings
 import com.thewizard.chainreactiononline20.gameLogic.dataHolder.GameState
-import com.thewizard.chainreactiononline20.objects_3d.GameGridRenderer
+import com.thewizard.chainreactiononline20.objects_3d.Grid
 import com.thewizard.chainreactiononline20.objects_3d.Light
 import com.thewizard.chainreactiononline20.objects_3d.OBJ
 import com.thewizard.chainreactiononline20.objects_3d.Sphere.DoubleSphere
 import com.thewizard.chainreactiononline20.objects_3d.Sphere.Sphere
 import com.thewizard.chainreactiononline20.objects_3d.Sphere.TrippleSphere
 import com.thewizard.chainreactiononline20.utils.ShaderUtil.Shader
-import com.thewizard.chainreactiononline20.utils.objUtils.Point3D
 import com.thewizard.chainreactiononline20.utils.openGlUtils.ProjectionMatrix
 import com.thewizard.chainreactiononline20.utils.openGlUtils.ProjectionType
 import com.thewizard.chainreactiononline20.utils.openGlUtils.ViewMatrix
@@ -48,30 +46,20 @@ class GameRenderer(
     private val doubleSphere = DoubleSphere(context)
     private val tripleSphere = TrippleSphere(context)
     private val light = Light()
-    private lateinit var gridRenderer: GameGridRenderer
+    private var gridRenderer = Grid(gameSettings)
+
+    private var boxPositions = BoxPositions(gameSettings)
 
     private lateinit var sphereShader: Shader
     private lateinit var gridShader: Shader
 
     lateinit var gridColor: FloatArray
-    lateinit var spherePositions: Array<Array<Point3D>>
-
-    init {
-        gameSettings.apply {
-            addListener {
-                gridRenderer = GameGridRenderer(context, rows, cols)
-                spherePositions = GameGridRenderer.calculateSpherePositions(rows, cols)
-            }
-        }
-
-    }
-
 
     val window: Window = (context as MainActivity).window.apply {
         addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
     }
 
-    var backgroundColor: FloatArray = floatArrayOf(0.05f, 0.05f, 0.08f, 1.0f)
+    var backgroundColor: FloatArray = GridColor.DEFAULT_BACKGROUND
         set(value) {
             field = value
             window.statusBarColor = convertToColor(value)
@@ -81,9 +69,9 @@ class GameRenderer(
         set(value) {
             field = value
             gameState!!.apply {
-                loop { i, j, box -> box.position = spherePositions[i][j] }
+                loop { box -> box.position = boxPositions.data[box.i][box.j] }
                 addTurnChangeListener { turnPlayer ->
-                    gridColor = turnPlayer.colorValue
+                    gridColor = turnPlayer.gridColorValue
                     backgroundColor = turnPlayer.backgroundColorValue
                 }
             }
@@ -105,7 +93,7 @@ class GameRenderer(
             .createProgram(OBJ.ATTRIBUTES)
 
         gridShader = Shader(context, R.raw.grid_vertex_shader, R.raw.grid_fragment_shader)
-            .createProgram(GameGridRenderer.ATTRIBUTES)
+            .createProgram(Grid.ATTRIBUTES)
 
         light.setShader(sphereShader)
         sphere.setShader(sphereShader)
@@ -113,6 +101,9 @@ class GameRenderer(
         tripleSphere.setShader(sphereShader)
         gridRenderer.addShader(gridShader)
 
+        gridColor = gameState?.turnPlayer?.colorValue ?: GridColor.DEFAULT_GRID
+        backgroundColor =
+            gameState?.turnPlayer?.backgroundColorValue ?: GridColor.DEFAULT_BACKGROUND
     }
 
     override fun onSurfaceChanged(glUnused: GL10, width: Int, height: Int) {
@@ -134,8 +125,7 @@ class GameRenderer(
         doubleSphere.addViewAndProjectionMatrix(viewMatrix.get(), gridProjectionMatrix.get())
         tripleSphere.addViewAndProjectionMatrix(viewMatrix.get(), gridProjectionMatrix.get())
 
-        gridColor = PlayerColor.getColor(BasicColor.RED)
-        backgroundColor = GridColor.getBackgroundColor(BasicColor.RED)
+
     }
 
 
@@ -156,19 +146,18 @@ class GameRenderer(
     }
 
     private fun drawExplosions() {
-        gameState!!.explosionAnimation.apply {
-            if (explosionInProgress)
-                drawExplosions(gridRenderer.spherePositions, sphere, gridColor)
-        }
+        if (gameState?.explosionAnimation?.explosionInProgress!!)
+            gameState?.explosionAnimation?.drawExplosions(sphere, gridColor)
+
     }
 
     private fun drawMolecules() {
-        gameState?.loop { i, j, box ->
+        gameState?.loop { box ->
             box.apply {
                 when (value) {
-                    1 -> sphere.draw(model, player.colorValue)
-                    2 -> doubleSphere.draw(model, player.colorValue)
-                    3 -> tripleSphere.draw(model, player.colorValue)
+                    1 -> sphere.draw(model, player.colorValue, backgroundColor)
+                    2 -> doubleSphere.draw(model, player.colorValue, backgroundColor)
+                    3 -> tripleSphere.draw(model, player.colorValue, backgroundColor)
                 }
             }
 

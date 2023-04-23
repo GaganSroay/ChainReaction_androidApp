@@ -12,6 +12,7 @@ import android.opengl.GLES20.glUniformMatrix4fv
 import android.opengl.GLES20.glUseProgram
 import android.opengl.GLES20.glVertexAttribPointer
 import android.opengl.Matrix
+import com.thewizard.chainreactiononline20.display.color.PlayerColor
 import com.thewizard.chainreactiononline20.utils.ShaderUtil.Shader
 import com.thewizard.chainreactiononline20.utils.objUtils.OBJloader
 import com.thewizard.chainreactiononline20.utils.openGlUtils.ModelMatrix
@@ -32,11 +33,13 @@ open class OBJ(context: Context, res: Int) : ModelMatrix() {
     var positionHandle: Int = 0
     var colorHandle: Int = 0
     var normalHandle: Int = 0
+    var ambientHandle: Int = 0
     var textureHandle: Int = 0
     var MVP_matrixHandle: Int = 0
     var MVM_matrixHandle: Int = 0
 
-    var color = floatArrayOf(1.0f, 0.0f, 0f, 1f)
+    var color = PlayerColor.DEFAULT
+    var ambientColor = PlayerColor.DEFAULT
 
     lateinit var viewMatrix: FloatArray
     lateinit var projectionMatrix: FloatArray
@@ -55,7 +58,8 @@ open class OBJ(context: Context, res: Int) : ModelMatrix() {
     fun setShader(shader: Shader) {
         program = shader.program
         positionHandle = glGetAttribLocation(program, A_POSITION)
-        colorHandle = glGetUniformLocation(program, A_COLOR)
+        colorHandle = glGetUniformLocation(program, U_COLOR)
+        ambientHandle = glGetUniformLocation(program, U_AMBIENT_COLOR)
         normalHandle = glGetAttribLocation(program, A_NORMAL)
         textureHandle = glGetAttribLocation(program, V_UV)
 
@@ -72,7 +76,6 @@ open class OBJ(context: Context, res: Int) : ModelMatrix() {
 
 
     open fun draw(modelMatrix: FloatArray) {
-
         glUseProgram(program)
 
         Matrix.multiplyMM(scratch, 0, viewMatrix, 0, modelMatrix, 0)
@@ -84,7 +87,8 @@ open class OBJ(context: Context, res: Int) : ModelMatrix() {
         glVertexAttribPointer(positionHandle, 3, GL_FLOAT, false, 0, vBuff)
         glEnableVertexAttribArray(positionHandle)
 
-        glUniform4fv(colorHandle, 1, color, 0);
+        glUniform4fv(colorHandle, 1, color, 0)
+        glUniform4fv(ambientHandle, 1, ambientColor, 0)
 
         nBuff.position(0)
         glVertexAttribPointer(normalHandle, 3, GL_FLOAT, false, 0, nBuff)
@@ -96,8 +100,9 @@ open class OBJ(context: Context, res: Int) : ModelMatrix() {
 
     companion object {
         const val A_POSITION = "a_Position"
-        const val A_COLOR = "a_Color"
+        const val U_COLOR = "u_Color"
         const val A_NORMAL = "a_Normal"
+        const val U_AMBIENT_COLOR = "u_AmbientColor"
 
         const val U_LIGHTPOSITION = "u_LightPos"
         const val U_MVPMATRIX = "u_MVPMatrix"
@@ -105,7 +110,15 @@ open class OBJ(context: Context, res: Int) : ModelMatrix() {
 
         const val V_UV = "a_TexCoordinate"
 
-        val ATTRIBUTES =
-            arrayOf(A_POSITION, A_COLOR, A_NORMAL, U_LIGHTPOSITION, U_MVPMATRIX, U_MVMMATRIX, V_UV)
+        val ATTRIBUTES = arrayOf(
+            A_POSITION,
+            U_COLOR,
+            A_NORMAL,
+            U_AMBIENT_COLOR,
+            U_LIGHTPOSITION,
+            U_MVPMATRIX,
+            U_MVMMATRIX,
+            V_UV
+        )
     }
 }

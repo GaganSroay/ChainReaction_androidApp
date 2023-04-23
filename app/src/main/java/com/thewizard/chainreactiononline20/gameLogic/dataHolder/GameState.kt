@@ -1,7 +1,6 @@
 package com.thewizard.chainreactiononline20.gameLogic.dataHolder
 
 import com.thewizard.chainreactiononline20.display.explosion.ExplosionAnimation
-import com.thewizard.chainreactiononline20.gameLogic.GameSettings
 import java.util.Vector
 
 class GameState(val gameSettings: GameSettings) {
@@ -12,7 +11,15 @@ class GameState(val gameSettings: GameSettings) {
     val rows = gameSettings.rows
     val cols = gameSettings.cols
     val numberOfPLayers = gameSettings.numberOfPLayers
-    var board: Array<Array<Box>> = Array(rows) { Array(cols) { Box() } }
+    var board: Array<Array<Box>> = Array(rows,
+        init = { i: Int ->
+            Array(cols,
+                init = { j: Int ->
+                    Box(i, j, gameSettings)
+                }
+            )
+        }
+    )
     var players = Array(numberOfPLayers, init = { i: Int -> Player(i) })
 
     var turn = 0
@@ -23,17 +30,9 @@ class GameState(val gameSettings: GameSettings) {
 
     val turnPlayer: Player get() = players[turn]
 
-    init {
-        for (i in 0 until rows)
-            for (j in 0 until cols) {
-                board[i][j].maxValue = if (isCorner(i, j)) 1
-                else if (isSide(i, j)) 2
-                else 3
-            }
-    }
 
     fun reset() {
-        loop { i, j, box -> box.value = 0 }
+        loop { box -> box.value = 0 }
         for (player in players)
             if (player.inGame) player.qualified = true
     }
@@ -64,7 +63,7 @@ class GameState(val gameSettings: GameSettings) {
     fun loop(looper: Looper) {
         for (i in 0 until rows)
             for (j in 0 until cols) {
-                looper.get(i, j, board[i][j])
+                looper.get(board[i][j])
             }
     }
 
@@ -79,7 +78,7 @@ class GameState(val gameSettings: GameSettings) {
     }
 
     fun interface Looper {
-        fun get(i: Int, j: Int, box: Box)
+        fun get(box: Box)
     }
 
     fun interface TurnChange {
