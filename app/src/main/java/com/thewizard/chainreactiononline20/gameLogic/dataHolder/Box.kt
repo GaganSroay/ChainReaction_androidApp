@@ -2,6 +2,7 @@ package com.thewizard.chainreactiononline20.gameLogic.dataHolder
 
 import android.os.SystemClock
 import com.thewizard.chainreactiononline20.utils.objUtils.Vec3
+import com.thewizard.chainreactiononline20.utils.openGlUtils.Mat
 import com.thewizard.chainreactiononline20.utils.openGlUtils.ModelMatrix
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -26,7 +27,12 @@ class Box(
     private val angleVec = Vec3(ran * 2f - 1, ran * 2f - 1, ran * 2f - 1)
     private var vibrationVec = normalise(Vec3(angleVec.i, angleVec.j, 0f))
 
-    val model: FloatArray
+
+    init {
+        scale(0.45f)
+    }
+
+    val model: Mat
         get() {
             if (value == maxValue) vibrate()
             else defaultPosition()

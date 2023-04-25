@@ -18,12 +18,12 @@ import com.thewizard.chainreactiononline20.display.color.GridColor
 import com.thewizard.chainreactiononline20.utils.ShaderUtil.Shader
 import com.thewizard.chainreactiononline20.utils.objUtils.OBJloader
 import com.thewizard.chainreactiononline20.utils.objUtils.TextureHelper
-import com.thewizard.chainreactiononline20.utils.openGlUtils.Mat
+import com.thewizard.chainreactiononline20.utils.openGlUtils.ModelMatrix
 import com.thewizard.chainreactiononline20.utils.otherUtils.BufferHelper
 import java.nio.FloatBuffer
 
 
-class Plain(val context: Context) {
+class Plain(val context: Context) : ModelMatrix() {
 
     private var program = 0
     private var mvMatrixHandle = 0
@@ -39,17 +39,12 @@ class Plain(val context: Context) {
 
     var color = GridColor.DEFAULT_BACKGROUND
 
-    lateinit var viewMatrix: Mat
-    lateinit var projectionMatrix: Mat
-
-    var posMatrix = Mat.pos(0f, 0f, -3f)
-    var scaleMatrix = Mat.scale(1f, 1.3f, 0.8f)
-
-    val modelViewProjectionMatrix: Mat get() = projectionMatrix * viewMatrix * posMatrix * scaleMatrix
-
     var texture = 0
 
     init {
+
+        pos(0f, 0f, -3f)
+        scale(1f, 1.3f, 0.8f)
 
         val obj = OBJloader(context, R.raw.plain_surface)
         numberOfVeritices = obj.positions.size / 3
@@ -72,12 +67,6 @@ class Plain(val context: Context) {
         colorHandle = glGetUniformLocation(program, U_COLOR)
         textureHandle = glGetUniformLocation(program, U_TEXTURE)
     }
-
-    fun addViewAndProjectionMatrix(viewMatrix: FloatArray, projectionMatrix: FloatArray) {
-        this.viewMatrix = Mat(viewMatrix)
-        this.projectionMatrix = Mat(projectionMatrix)
-    }
-
 
     fun draw() {
         glUseProgram(program)

@@ -1,87 +1,52 @@
 package com.thewizard.chainreactiononline20.utils.openGlUtils
 
-import android.opengl.Matrix
 import com.thewizard.chainreactiononline20.utils.objUtils.Point3D
 
 open class ModelMatrix {
 
-    var positionMatrix = FloatArray(16)
-    var rotationMatrix = FloatArray(16)
-    var scaleMatrix = FloatArray(16)
+    var positionMatrix = Mat()
+    var rotationMatrix = Mat()
+    var scaleMatrix = Mat()
 
-    var viewMatrix = FloatArray(16)
-    var projectionMatrix = FloatArray(16)
+    var viewMatrix = Mat()
+    var projectionMatrix = Mat()
 
-    val temp = FloatArray(16)
+    val modelMatrix: Mat get() = positionMatrix * scaleMatrix * rotationMatrix
 
-    val modelMatrix: FloatArray get() = multiplyMatrix(positionMatrix, scaleMatrix, rotationMatrix)
-    val modelViewProjectionMatrix: FloatArray
-        get() = multiplyMatrix(
-            viewMatrix,
-            projectionMatrix,
-            modelMatrix
-        )
+    val viewProjectionMatrix: Mat get() = viewMatrix * projectionMatrix
+    val modelViewMatrix: Mat get() = viewMatrix * modelMatrix
+
+    val modelViewProjectionMatrix: Mat get() = projectionMatrix * viewMatrix * modelMatrix
 
     var position: Point3D = Point3D()
         set(point) {
             field = point
-            Matrix.setIdentityM(positionMatrix, 0)
-            translate(point.x, point.y, point.z)
+            positionMatrix.translate(point.x, point.y, point.z)
         }
 
-    init {
-        Matrix.setIdentityM(scaleMatrix, 0)
-        Matrix.setIdentityM(rotationMatrix, 0)
-        Matrix.setIdentityM(positionMatrix, 0)
-        Matrix.setIdentityM(modelMatrix, 0)
-        setScale(0.45f)
+    val X: Float get() = position.x
+    val Y: Float get() = position.y
+    val Z: Float get() = position.z
+
+    fun scale(s: Float) = scale(s, s, s)
+    fun scale(x: Float, y: Float, z: Float) = scaleMatrix.scale(x, y, z)
+
+    fun translate(x: Float, y: Float, z: Float) = positionMatrix.translate(x, y, z)
+    fun pos(x: Float, y: Float, z: Float) = positionMatrix.pos(x, y, z)
+    fun pos(point: Point3D) = positionMatrix.pos(point)
+
+    fun moveRelativeToOrigin(x: Float, y: Float, z: Float) = positionMatrix.pos(X + x, Y + y, Z + z)
+    fun rotate(angle: Float, x: Float, y: Float, z: Float) = rotationMatrix.angle(angle, x, y, z)
+    fun defaultPosition() = positionMatrix.pos(position.x, position.y, position.z)
+
+    fun addViewAndProjectionMatrix(viewMatrix: ViewMatrix, projectionMatrix: ProjectionMatrix) {
+        this.viewMatrix = viewMatrix
+        this.projectionMatrix = projectionMatrix
     }
 
-    open fun setScale(x: Float, y: Float, z: Float) {
-        Matrix.scaleM(scaleMatrix, 0, x, y, z)
-    }
-
-    open fun translate(x: Float, y: Float, z: Float) {
-        Matrix.translateM(positionMatrix, 0, x, y, z)
-    }
-
-    fun rotate(angle: Float, x: Float, y: Float, z: Float) {
-        Matrix.setRotateM(rotationMatrix, 0, angle, x, y, z)
-    }
-
-    fun setOrientation(angle: Float, x: Float, y: Float, z: Float) {
-        Matrix.setIdentityM(rotationMatrix, 0)
-        Matrix.setRotateM(rotationMatrix, 0, angle, x, y, z)
-    }
-
-    fun setPos(x: Float, y: Float, z: Float) {
-        Matrix.setIdentityM(positionMatrix, 0)
-        translate(x, y, z)
-    }
-
-    fun setPositionArray(position: Point3D) {
-        this.position = position
-        Matrix.setIdentityM(positionMatrix, 0)
-        translate(position.x, position.y, position.z)
-    }
-
-    fun moveRelativeToOrigin(x: Float, y: Float, z: Float) {
-        Matrix.setIdentityM(positionMatrix, 0)
-        translate(position.x + x, position.y + y, position.z + z)
-    }
-
-    fun defaultPosition() = setPositionArray(position)
-
-    fun setScale(s: Float) = setScale(s, s, s)
-
-    fun makeCopy(): FloatArray = modelMatrix.clone()
-
-
-    fun multiplyMatrix(m1: FloatArray, m2: FloatArray, m3: FloatArray): FloatArray {
-        Matrix.setIdentityM(temp, 0)
-        Matrix.multiplyMM(temp, 0, m1, 0, m2, 0)
-        Matrix.multiplyMM(temp, 0, temp, 0, m3, 0)
-        return temp
+    fun addCamera(camera: Camera) {
+        viewMatrix = camera.viewMatrix
+        projectionMatrix = camera.projectionMatrix
     }
 
 

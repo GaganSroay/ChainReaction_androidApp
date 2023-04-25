@@ -5,10 +5,10 @@ import android.opengl.GLES20.glUniform3f
 import android.opengl.Matrix
 import com.thewizard.chainreactiononline20.utils.ShaderUtil.Shader
 
-class Light() {
+class Light {
 
-    var lightHandle: Int = 0
-    var program: Int = 0
+    private var lightHandle: Int = 0
+    private var program: Int = 0
 
     private val mLightPosInModelSpace = floatArrayOf(0.0f, 0.0f, 0.0f, -1.0f)
     private val mLightPosInWorldSpace = FloatArray(4)
@@ -20,11 +20,7 @@ class Light() {
         lightHandle = GLES20.glGetUniformLocation(program, OBJ.U_LIGHTPOSITION)
     }
 
-    private var z = -7.0f;
-
-    fun translate(z: Float) {
-        this.z = z
-    }
+    private var z = -7.0f
 
 
     fun drawLight(mViewMatrix: FloatArray) {

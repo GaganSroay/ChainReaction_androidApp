@@ -8,9 +8,13 @@ class ProjectionMatrix(
     viewHeight: Int,
     near: Float,
     far: Float
-) {
+) : Mat() {
 
-    private val projectionMatrix = FloatArray(16)
+    override var array: FloatArray
+        get() = super.array
+        set(value) {
+            super.array = value
+        }
 
     init {
         val ratio = viewWidth.toFloat() / viewHeight
@@ -20,17 +24,14 @@ class ProjectionMatrix(
 
         when (type) {
             ProjectionType.ORTHOGONAL ->
-                Matrix.orthoM(projectionMatrix, 0, left, ratio, bottom, top, near, far)
+                Matrix.orthoM(array, 0, left, ratio, bottom, top, near, far)
 
             ProjectionType.PRESPECTIVE ->
-                Matrix.frustumM(projectionMatrix, 0, left, ratio, bottom, top, near, far)
+                Matrix.frustumM(array, 0, left, ratio, bottom, top, near, far)
         }
 
     }
 
-    fun get(): FloatArray {
-        return projectionMatrix
-    }
 
 
 }

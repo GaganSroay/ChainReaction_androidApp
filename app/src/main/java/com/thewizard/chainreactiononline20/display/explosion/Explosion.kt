@@ -25,9 +25,16 @@ open class Explosion(
 
     init {
         upModel.position = box.position
+        upModel.scale(0.45f)
+
         downModel.position = box.position
+        downModel.scale(0.45f)
+
         leftModel.position = box.position
+        leftModel.scale(0.45f)
+
         rightModel.position = box.position
+        rightModel.scale(0.45f)
     }
 
 

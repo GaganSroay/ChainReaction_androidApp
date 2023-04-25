@@ -13,15 +13,13 @@ import com.thewizard.chainreactiononline20.utils.otherUtils.Logger
 
 class NeonButton(context: Context, attrs: AttributeSet) : NeonView(context, attrs) {
 
-    lateinit var baseRect: RectF
+    private lateinit var baseRect: RectF
 
-    var textPosX = 0f
-    var textPosY = 0f
-    var buttonDown = false
+    private var textPosX = 0f
+    private var textPosY = 0f
+    private var buttonDown = false
 
-
-
-    val buttonDownColor = changeBrightness(buttonColor, 0.8f)
+    private val buttonDownColor = changeBrightness(buttonColor, 0.8f)
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -66,7 +64,7 @@ class NeonButton(context: Context, attrs: AttributeSet) : NeonView(context, attr
         color = buttonDownColor
     }
 
-    fun buttonPaint(blur: Float = 0f): Paint {
+    private fun buttonPaint(blur: Float = 0f): Paint {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.FILL
             color = buttonColor
@@ -77,7 +75,7 @@ class NeonButton(context: Context, attrs: AttributeSet) : NeonView(context, attr
     }
 
 
-    fun textPaint(blur: Float = 0f): Paint {
+    private fun textPaint(blur: Float = 0f): Paint {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.FILL
             textAlign = Paint.Align.CENTER
@@ -95,10 +93,6 @@ class NeonButton(context: Context, attrs: AttributeSet) : NeonView(context, attr
         textSize = this@NeonButton.textSize
         color = Color.WHITE
     }
-
-
-
-
 
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
