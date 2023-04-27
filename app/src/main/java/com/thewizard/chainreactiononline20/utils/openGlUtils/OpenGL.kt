@@ -1,13 +1,16 @@
 package com.thewizard.chainreactiononline20.utils.openGlUtils
 
 import android.opengl.GLES20.GL_COLOR_BUFFER_BIT
+import android.opengl.GLES20.GL_CULL_FACE
 import android.opengl.GLES20.GL_DEPTH_BUFFER_BIT
+import android.opengl.GLES20.GL_DEPTH_TEST
 import android.opengl.GLES20.GL_FLOAT
 import android.opengl.GLES20.GL_POINTS
 import android.opengl.GLES20.GL_TRIANGLES
 import android.opengl.GLES20.glClear
 import android.opengl.GLES20.glClearColor
 import android.opengl.GLES20.glDrawArrays
+import android.opengl.GLES20.glEnable
 import android.opengl.GLES20.glEnableVertexAttribArray
 import android.opengl.GLES20.glGetAttribLocation
 import android.opengl.GLES20.glGetUniformLocation
@@ -22,9 +25,15 @@ open class OpenGL : ModelMatrix() {
 
     var program = 0
 
+    var clearColor: FloatArray = FloatArray(4)
+        set(value) {
+            glClearColor(value[0], value[1], value[2], value[3])
+            field = value
+        }
+
     fun clear() = glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
     fun clear(color: FloatArray) {
-        glClearColor(color[0], color[1], color[2], color[3])
+        clearColor = color
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
     }
 
@@ -73,5 +82,7 @@ open class OpenGL : ModelMatrix() {
     val String.attribute get() = glGetAttribLocation(program, this)
     val String.uniform get() = glGetUniformLocation(program, this)
 
+    fun enableCullFace() = glEnable(GL_CULL_FACE)
+    fun enableDepthText() = glEnable(GL_DEPTH_TEST)
 
 }

@@ -1,10 +1,6 @@
 package com.thewizard.chainreactiononline20.display
 
 import android.content.Context
-import android.opengl.GLES20.GL_CULL_FACE
-import android.opengl.GLES20.GL_DEPTH_TEST
-import android.opengl.GLES20.glClearColor
-import android.opengl.GLES20.glEnable
 import android.opengl.GLES20.glViewport
 import android.opengl.GLSurfaceView
 import android.view.Window
@@ -42,7 +38,7 @@ class GameRenderer(
     private val doubleSphere = DoubleSphere(context)
     private val tripleSphere = TrippleSphere(context)
     private val light = Light()
-    private var gridRenderer = Grid(gameSettings)
+    private var grid = Grid(gameSettings)
     private var plain = Plain(context)
 
     private var boxPositions = BoxPositions(gameSettings)
@@ -79,9 +75,9 @@ class GameRenderer(
 
 
     override fun onSurfaceCreated(glUnused: GL10, config: EGLConfig) {
-        glClearColor(0.05f, 0.05f, 0.08f, 1.0f)
-        glEnable(GL_CULL_FACE)
-        glEnable(GL_DEPTH_TEST)
+        clearColor = GridColor.DEFAULT_BACKGROUND
+        enableCullFace()
+        enableDepthText()
 
         sphereShader = Shader(context, R.raw.light_vertex_shader, R.raw.light_fragment_shader)
             .createProgram(OBJ.ATTRIBUTES)
@@ -96,7 +92,7 @@ class GameRenderer(
         sphere.setShader(sphereShader)
         doubleSphere.setShader(sphereShader)
         tripleSphere.setShader(sphereShader)
-        gridRenderer.addShader(gridShader)
+        grid.addShader(gridShader)
         plain.addShader(plainShader)
         plain.generateTextures()
 
@@ -115,7 +111,7 @@ class GameRenderer(
             projectionMatrix = simpleProjection(ProjectionType.PRESPECTIVE, width, height)
         }
 
-        gridRenderer.addCamera(camera)
+        grid.addCamera(camera)
 
         sphere.addCamera(camera)
         doubleSphere.addCamera(camera)
@@ -129,17 +125,12 @@ class GameRenderer(
         clear()
 
         plain.draw()
-        drawGrid()
+        grid.draw(gridColor)
         if (gameState != null) {
             drawExplosions()
             drawMolecules()
         }
 
-    }
-
-    private fun drawGrid() {
-        //clear(backgroundColor)
-        gridRenderer.draw(gridColor)
     }
 
     private fun drawExplosions() {

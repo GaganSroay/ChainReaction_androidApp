@@ -39,11 +39,6 @@ open class ModelMatrix {
     fun rotate(angle: Float, x: Float, y: Float, z: Float) = rotationMatrix.angle(angle, x, y, z)
     fun defaultPosition() = positionMatrix.pos(position.x, position.y, position.z)
 
-    fun addViewAndProjectionMatrix(viewMatrix: ViewMatrix, projectionMatrix: ProjectionMatrix) {
-        this.viewMatrix = viewMatrix
-        this.projectionMatrix = projectionMatrix
-    }
-
     fun addCamera(camera: Camera) {
         viewMatrix = camera.viewMatrix
         projectionMatrix = camera.projectionMatrix
